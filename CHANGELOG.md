@@ -30,6 +30,10 @@
 
 * **`okta_behavior`** (resource and data source): Deprecated in favour of the typed `okta_behavior_*` resources and data sources, and will be removed in a future version. Existing state is not migrated automatically. [#3024](https://github.com/okta/terraform-provider-okta/pull/3024) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
 
+### FEATURES
+
+* **`okta_authenticator`, `okta_policy_mfa`, `okta_policy_mfa_default`**: Added support for the Temporary Access Code (TAC) authenticator (key `tac`). `okta_authenticator` accepts `tac` as a `key` value, configured via `provider_json`; `okta_policy_mfa` and `okta_policy_mfa_default` accept a `tac` enrollment block. `okta_authenticator` and its data source now perform all authenticator operations through the Okta SDK v6, removing the resource's dependency on the provider's legacy internal SDK. [#2717](https://github.com/okta/terraform-provider-okta/issues/2717)
+
 ### BUG FIXES
 
 * **`okta_group`, `okta_app_group_assignment`, `okta_app_user`**: Delete now treats a 404 as success, so destroy no longer fails when the object was already removed in Okta (for example when Okta cascade-deletes an app assignment). [#2998](https://github.com/okta/terraform-provider-okta/pull/2998) by [pranav-okta](https://github.com/pranav-okta)
