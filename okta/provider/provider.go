@@ -102,6 +102,11 @@ func Provider() *schema.Provider {
 				ValidateDiagFunc: intBetween(1, 5),
 				Description:      "providers log level. Minimum is 1 (TRACE), and maximum is 5 (ERROR)",
 			},
+			"app_read_batching": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Share paginated app assignment and push-mapping reads during refresh. Enable for configurations managing many groups per app. Defaults to false; collection reads may cost more for apps with few managed groups. Cached collections expire after 30 seconds and are bypassed after management writes.",
+			},
 			"max_api_capacity": {
 				Type:             schema.TypeInt,
 				Optional:         true,

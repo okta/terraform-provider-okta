@@ -8,6 +8,8 @@ description: |-
 
 Creates a Push Group assignment for an Application in Okta.
 
+When app_read_batching is enabled, refresh reads share a complete paginated app collection for up to 30 seconds across distinct resources in one provider configuration. Repeated reads and reads after management writes use fresh data; missing list entries are checked individually. Resource ownership is unchanged.
+
 ## Example Usage
 
 ```terraform

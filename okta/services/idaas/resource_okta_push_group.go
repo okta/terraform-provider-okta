@@ -126,7 +126,7 @@ func (r *pushGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				},
 			},
 		},
-		Description: "Creates a Push Group assignment for an Application in Okta.",
+		Description: "Creates a Push Group assignment for an Application in Okta. When app_read_batching is enabled, refresh reads share a complete paginated app collection for up to 30 seconds across distinct resources in one provider configuration. Repeated reads and reads after management writes use fresh data; missing list entries are checked individually. Resource ownership is unchanged.",
 	}
 }
 
@@ -224,7 +224,7 @@ func (r *pushGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	groupPushMapping, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Execute()
+	groupPushMapping, err := readPushMapping(ctx, r.config, state.AppId.ValueString(), state.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading Okta push group mapping ", err.Error())
 		return

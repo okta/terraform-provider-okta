@@ -21,6 +21,7 @@ import (
 	v8okta "github.com/okta/okta-sdk-golang/v8/okta"
 	v9okta "github.com/okta/okta-sdk-golang/v9/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
+	"github.com/okta/terraform-provider-okta/okta/internal/apprefresh"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/okta/version"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -51,6 +52,7 @@ type OktaIDaaSClient interface {
 }
 
 type OktaAPIConfig struct {
+	AppReads       *apprefresh.Cache
 	AccessToken    string
 	ApiToken       string
 	Backoff        bool
@@ -268,6 +270,7 @@ func GetV3ClientConfig(c *OktaAPIConfig) (*okta.Configuration, *okta.APIClient, 
 		}
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.Logger)
 	}
+	httpClient.Transport = apprefresh.InvalidateWrites(httpClient.Transport, c.AppReads)
 	var orgUrl string
 	var disableHTTPS bool
 	if c.HttpProxy != "" {

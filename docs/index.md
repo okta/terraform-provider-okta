@@ -133,6 +133,7 @@ arguments](https://www.terraform.io/docs/configuration/providers.html) (e.g.
 
 - `request_timeout` - (Optional) Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.
 
+- `app_read_batching` - (Optional) Share paginated app assignment and push-mapping reads during refresh. Enable for configurations managing many groups per app. Defaults to false; collection reads may cost more for apps with few managed groups. Cached collections expire after 30 seconds and are bypassed after management writes.
 - `max_api_capacity` - (Optional) sets what percentage of capacity the provider can use of the total
   rate limit capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets.
   See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt. Can be set to a value between 1 and 100.
