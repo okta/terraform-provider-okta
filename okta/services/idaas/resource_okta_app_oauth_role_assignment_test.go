@@ -13,7 +13,7 @@ import (
 func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuthRoleAssignment, t.Name())
 
-	acctest.OktaResourceTest(t, resource.TestCase{
+	acctest.OktaResourceTestSerial(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
@@ -58,7 +58,7 @@ func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 func TestAccResourceOktaAppOAuthRoleAssignment_custom(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuthRoleAssignment, t.Name())
 
-	acctest.OktaResourceTest(t, resource.TestCase{
+	acctest.OktaResourceTestSerial(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,

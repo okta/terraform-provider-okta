@@ -19,7 +19,7 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
-	acctest.OktaResourceTest(
+	acctest.OktaResourceTestSerial(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
@@ -76,7 +76,7 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 		}`, orgName, baseUrl)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
-	acctest.OktaResourceTest(
+	acctest.OktaResourceTestSerial(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
@@ -131,7 +131,7 @@ resource "okta_resource_set" "test" {
   ]
 }`
 
-	acctest.OktaResourceTest(t, resource.TestCase{
+	acctest.OktaResourceTestSerial(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
@@ -208,7 +208,7 @@ resource "okta_resource_set" "test" {
   ]
 }`
 
-	acctest.OktaResourceTest(t, resource.TestCase{
+	acctest.OktaResourceTestSerial(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
