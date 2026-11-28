@@ -89,7 +89,7 @@ Required:
 ### Nested Schema for `access_duration_settings`
 Required:
 - `type` (String) Enum: `ADMIN_FIXED_DURATION`, `REQUESTER_SPECIFIED_DURATION`.
-- `duration` (String) The duration set by the admin for access durations. Use ISO8061 notation for duration values..
+- `duration` (String) The duration set by the admin for access durations. Use ISO8601 notation for duration values.
 
 
 ## Import
