@@ -1,4 +1,9 @@
-# okta_app_signon_policy_rules
+---
+page_title: "Resource: okta_app_signon_policy_rules"
+description: |-
+  Manages multiple app sign-on policy rules for a single policy. This resource allows you to define all rules for a policy in a single configuration block, ensuring consistent priority ordering and avoiding drift issues.
+---
+# Resource: okta_app_signon_policy_rules
 
 Manages multiple app sign-on policy rules for a single policy. This resource allows you to define all rules for a policy in a single configuration block, ensuring consistent priority ordering and avoiding drift issues.
 
