@@ -37,6 +37,7 @@ data "okta_idp_saml" "example" {
 - `sso_url` (String) Single sign-on url.
 - `subject_filter` (String) Regular expression pattern used to filter untrusted IdP usernames.
 - `subject_format` (Set of String) Expression to generate or transform a unique username for the IdP user.
+- `trust_claims` (Boolean) Indicates whether to trust authentication claims from the IdP.
 - `type` (String) Type of idp.
 
 

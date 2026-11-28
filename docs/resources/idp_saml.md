@@ -62,6 +62,7 @@ resource "okta_idp_saml" "example" {
 - `subject_match_attribute` (String) Okta user profile attribute for matching transformed IdP username. Only for matchType `CUSTOM_ATTRIBUTE`.
 - `subject_match_type` (String) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `USERNAME`. It can be set to `USERNAME`, `EMAIL`, `USERNAME_OR_EMAIL` or `CUSTOM_ATTRIBUTE`.
 - `suspended_action` (String) Action for a previously suspended IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`
+- `trust_claims` (Boolean) Indicates whether to trust authentication claims from the IdP.
 - `username_template` (String) Okta EL Expression to generate or transform a unique username for the IdP user. Default: `idpuser.email`
 
 ### Read-Only
