@@ -31,6 +31,7 @@ Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
 'array_*' variation of 'enum' and 'one_of'`,
 		Schema: utils.BuildSchema(
 			userSchemaSchema,
+			userSchemaDefaultSchema,
 			userBaseSchemaSchema,
 			userTypeSchema,
 			// userPatternSchema,

@@ -4,6 +4,7 @@ package sdk
 import "encoding/json"
 
 type UserSchemaAttribute struct {
+	Default           interface{}                      `json:"default,omitempty"`
 	Description       string                           `json:"description,omitempty"`
 	Enum              []interface{}                    `json:"enum,omitempty"`
 	ExternalName      string                           `json:"externalName,omitempty"`

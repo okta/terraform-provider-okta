@@ -3,6 +3,8 @@ resource "okta_user_schema_property" "example" {
   title       = "customPropertyName"
   type        = "string"
   description = "My custom property name"
+  enum        = ["PRIMARY", "SECONDARY"]
+  default     = "PRIMARY"
   master      = "OKTA"
   scope       = "SELF"
   user_type   = data.okta_user_type.example.id
