@@ -10,6 +10,11 @@ TFPROVIDERLINT=tfproviderlint
 TFPROVIDERLINTX=tfproviderlintx
 STATICCHECK=staticcheck
 
+# Tool Versions
+GOFUMPT_VERSION=v0.7.0
+TFPROVIDERLINT_VERSION=v0.30.0
+STATICCHECK_VERSION=v0.5.1
+
 # Expression to match against tests
 # go test -run <filter>
 # e.g. Iden will run all TestAccIdentity tests
@@ -79,7 +84,7 @@ testacc:
 	TF_ACC=1 go test $(ACC_TESTS) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(PKG_NAME)
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run $(TEST_FILTER) ./$(PKG_NAME)
 
 test-play-vcr-acc-governance:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta/services/governance
@@ -88,7 +93,7 @@ smoke-test-play-vcr-acc:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ $(ACC_TESTS)
 
 test-record-vcr-acc:
-	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(ACC_TESTS)
+	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly $(TESTARGS) -timeout 120m -run $(TEST_FILTER) ./$(PKG_NAME)
 
 qc: fmt tf-fmt lint
 
