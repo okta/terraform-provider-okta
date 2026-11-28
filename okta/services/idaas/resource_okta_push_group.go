@@ -338,6 +338,13 @@ func (r *pushGroupResource) ImportState(ctx context.Context, req resource.Import
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), appId)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), mappingId)...)
+
+	// delete_target_group_on_destroy only exists as a query parameter on the delete
+	// call, so Okta never returns it and it cannot be read back. Seed it with the
+	// schema default so an imported mapping starts out the same as a created one,
+	// instead of leaving state null (which shows up as a spurious plan diff and
+	// makes Delete send deleteTargetGroup=false).
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("delete_target_group_on_destroy"), true)...)
 }
 
 func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, state *pushGroupResourceModel) diag.Diagnostics {
@@ -347,6 +354,15 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 	state.TargetGroupId = types.StringPointerValue(groupPushMapping.TargetGroupId)
 	state.Status = types.StringPointerValue(groupPushMapping.Status)
 	state.AppConfig = types.ObjectNull(appConfigAttrTypes)
+
+	// delete_target_group_on_destroy has no counterpart in the API response, so the
+	// incoming value (plan on create/update, prior state on read) is authoritative and
+	// must not be overwritten here. A null only happens for state written by an import
+	// on a provider version that did not set the attribute; fall back to the documented
+	// default there so those mappings destroy the same way created ones do.
+	if state.DeleteTargetGroupOnDestroy.IsNull() {
+		state.DeleteTargetGroupOnDestroy = types.BoolValue(true)
+	}
 
 	// Preserve app_config in state only when the API returns at least one concrete value.
 	// Some mappings return an empty app_config envelope, which must stay null in state.
