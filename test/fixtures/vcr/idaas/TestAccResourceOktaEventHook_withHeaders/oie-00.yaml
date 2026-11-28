@@ -1,0 +1,169 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 326
+        host: oie-00.dne-okta.com
+        body: |
+            {"channel":{"config":{"headers":[{"key":"Content-Type","value":"application/json"},{"key":"User-Agent","value":"Terraform-Provider-Okta"}],"uri":"https://example.com/webhook"},"type":"HTTP","version":"1.0.0"},"events":{"items":["user.lifecycle.create"],"type":"EVENT_TYPE"},"name":"Event Hook with Headers","status":"ACTIVE"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmrgw5o2qwDPf697","status":"ACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook with Headers","description":null,"created":"2025-07-22T08:12:06.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:06.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[{"key":"Content-Type","value":"application/json"},{"key":"User-Agent","value":"Terraform-Provider-Okta"}],"method":"POST","authScheme":null}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697"},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/verify","hints":{"allow":["POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 870.912708ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmrgw5o2qwDPf697","status":"ACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook with Headers","description":null,"created":"2025-07-22T08:12:06.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:06.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[{"key":"Content-Type","value":"application/json"},{"key":"User-Agent","value":"Terraform-Provider-Okta"}],"method":"POST","authScheme":null}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697"},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/verify","hints":{"allow":["POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 652.03225ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmrgw5o2qwDPf697","status":"ACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook with Headers","description":null,"created":"2025-07-22T08:12:06.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:06.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[{"key":"Content-Type","value":"application/json"},{"key":"User-Agent","value":"Terraform-Provider-Okta"}],"method":"POST","authScheme":null}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697"},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/verify","hints":{"allow":["POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 816.843584ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmrgw5o2qwDPf697","status":"INACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook with Headers","description":null,"created":"2025-07-22T08:12:06.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:09.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[{"key":"Content-Type","value":"application/json"},{"key":"User-Agent","value":"Terraform-Provider-Okta"}],"method":"POST","authScheme":null}},"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697"},"delete":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 846.295584ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmrgw5o2qwDPf697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 08:12:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 817.290667ms
