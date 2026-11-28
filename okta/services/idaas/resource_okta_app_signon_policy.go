@@ -187,8 +187,13 @@ func (r *appSignOnPolicyResource) Read(ctx context.Context, req resource.ReadReq
 	if !state.ID.IsNull() && state.Name.IsNull() && state.Description.IsNull() {
 		state.CatchAll = types.BoolValue(true)
 	}
-	accessPolicy, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.GetPolicy(ctx, state.ID.ValueString()).Execute()
+	accessPolicy, apiResp, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.GetPolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
+		// The policy was deleted outside Terraform: drop it from state so the plan can recreate it.
+		if utils.SuppressErrorOn404_V5(apiResp, err) == nil {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			"failed to read access policy",
 			err.Error(),
