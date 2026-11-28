@@ -224,10 +224,19 @@ func (r *pushGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	groupPushMapping, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Execute()
+	appID := state.AppId.ValueString()
+	listed, ok, err := listingCachesFor(r.config).groupPushMappings.lookup(ctx, appID, state.ID.ValueString(), listGroupPushMappings(r.config, appID))
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading Okta push group mapping ", err.Error())
 		return
+	}
+	groupPushMapping := &listed
+	if !ok {
+		groupPushMapping, _, err = r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, appID, state.ID.ValueString()).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError("Error reading Okta push group mapping ", err.Error())
+			return
+		}
 	}
 
 	resp.Diagnostics.Append(mapPushGroupResourceToState(groupPushMapping, &state)...)
@@ -247,6 +256,7 @@ func (r *pushGroupResource) Update(ctx context.Context, req resource.UpdateReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	listingCachesFor(r.config).groupPushMappings.forget(state.AppId.ValueString(), state.ID.ValueString())
 
 	if state.Status.ValueString() != "ACTIVE" && state.Status.ValueString() != "INACTIVE" {
 		resp.Diagnostics.AddError("Group push mapping in disallowed status", "The Okta API doesn't allow updating the group push mapping when the status is not either ACTIVE or INACTIVE")
@@ -283,6 +293,7 @@ func (r *pushGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	listingCachesFor(r.config).groupPushMappings.forget(state.AppId.ValueString(), state.ID.ValueString())
 
 	if state.Status.ValueString() != "ACTIVE" && state.Status.ValueString() != "INACTIVE" {
 		resp.Diagnostics.AddError("Group push mapping in disallowed status", "To delete a group push mapping, the status must be INACTIVE. Setting the status to INACTIVE however failed because the Okta API doesn't allow updating the group push mapping when the status is not either ACTIVE or INACTIVE")
