@@ -3,6 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"log"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -379,6 +381,98 @@ func TestIntersection(t *testing.T) {
 	assert.Equal(t, []string{"c", "d", "e"}, intersection)
 	assert.Equal(t, []string{"a", "b"}, exclusiveOld)
 	assert.Equal(t, []string{"f", "g"}, exclusiveNew)
+}
+
+func TestLogoFileIsValid(t *testing.T) {
+	const supportedPNG = "../../examples/resources/okta_app_basic_auth/terraform_icon.png"
+
+	dir := t.TempDir()
+
+	svgPath := filepath.Join(dir, "logo.svg")
+	if err := os.WriteFile(svgPath, []byte(`<svg xmlns="http://www.w3.org/2000/svg"/>`), 0o600); err != nil {
+		t.Fatalf("write svg fixture: %v", err)
+	}
+	garbagePath := filepath.Join(dir, "logo.png")
+	if err := os.WriteFile(garbagePath, []byte("not actually an image"), 0o600); err != nil {
+		t.Fatalf("write garbage fixture: %v", err)
+	}
+	oversizedPath := filepath.Join(dir, "big.png")
+	if err := os.WriteFile(oversizedPath, make([]byte, (1<<20)+1), 0o600); err != nil {
+		t.Fatalf("write oversized fixture: %v", err)
+	}
+
+	cases := []struct {
+		name          string
+		input         string
+		wantErrors    bool
+		wantWarnings  bool
+		summarySubstr string
+	}{
+		{
+			name:  "supported png",
+			input: supportedPNG,
+		},
+		{
+			name:          "unsupported svg warns but does not error",
+			input:         svgPath,
+			wantWarnings:  true,
+			summarySubstr: "supported formats",
+		},
+		{
+			name:          "garbage bytes warn but do not error",
+			input:         garbagePath,
+			wantWarnings:  true,
+			summarySubstr: "supported formats",
+		},
+		{
+			name:          "missing file errors",
+			input:         filepath.Join(dir, "does-not-exist"),
+			wantErrors:    true,
+			summarySubstr: "invalid",
+		},
+		{
+			name:          "oversized file errors",
+			input:         oversizedPath,
+			wantErrors:    true,
+			summarySubstr: "less than 1 MB",
+		},
+	}
+
+	validate := LogoFileIsValid()
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			diags := validate(c.input, cty.Path{})
+			var hasErr, hasWarn bool
+			var summaries []string
+			for _, d := range diags {
+				summaries = append(summaries, d.Summary)
+				if d.Severity == diag.Error {
+					hasErr = true
+				}
+				if d.Severity == diag.Warning {
+					hasWarn = true
+				}
+			}
+			if hasErr != c.wantErrors {
+				t.Errorf("errors: got %v want %v (diags=%v)", hasErr, c.wantErrors, summaries)
+			}
+			if hasWarn != c.wantWarnings {
+				t.Errorf("warnings: got %v want %v (diags=%v)", hasWarn, c.wantWarnings, summaries)
+			}
+			if c.summarySubstr != "" {
+				found := false
+				for _, s := range summaries {
+					if strings.Contains(s, c.summarySubstr) {
+						found = true
+						break
+					}
+				}
+				if !found {
+					t.Errorf("expected summary containing %q, got %v", c.summarySubstr, summaries)
+				}
+			}
+		})
+	}
 }
 
 func TestLogoStateFunc(t *testing.T) {
